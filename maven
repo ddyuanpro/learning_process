@@ -1,0 +1,232 @@
+maven
+第一部分 maven介绍
+1.maven是什么
+  maven是apache下的一个开源项目，是纯Java开发，使用maven对项目进行构建，依赖管理。
+2.项目构建
+  项目构建是一个项目从编写源代码到编译、测试、运行、打包、部署、运行的过程。
+  2.1 传统使用eclipse构建项目的过程
+       a. 在eclipse中创建一个java web工程
+       b. 在工程中编写源代码及配置文件等
+       c. 对源代码进行编译，Java文件编译成class文件
+       d. 执行Junit单元测试
+       e. 将工程打成war包部署至tomcat运行
+  2.2 maven项目构建过程：
+     2.2.1 maven将项目构建的过程进行标准化，每个阶段使用一个命令完成清理，编译，测试，报告，打包，部署
+            a. 清理阶段对应maven的命令是clean，清理输出的class文件
+            b. 编译阶段对应maven的命令是compile，将java代码编译成class文件
+            c. 打包阶段对应的maven的命令是package，java工程可以打成jar包，web包可以打成war包
+            d. 运行一个maven工程（web工程）需要一个命令： tomcat:run
+  2.3 maven工程构建的优点：
+     a. 一个命令完成构建、运行，方便快捷
+     b. maven对每个构建阶段进行规范，非常有利于大型团队协作开发
+ 3.依赖管理
+   3.1 什么是依赖?
+       一个Java项目可能要使用一些第三方的jar包才可以运行，那么我们说这个Java项目依赖了这些第三方的jar包。
+   3.2 什么是依赖管理?
+       就是对项目所有依赖的jar包进行规范化管理。
+   3.2 传统依赖管理
+       传统的项目工程要管理所依赖的jar包完全靠人工进行，需要从网上下载jar包添加到项目工程中。
+   3.3 手工拷贝jar包添加到工程中的问题：
+       a. 没有对jar包的版本统一管理，容易导致版本冲突
+       b. 从网上找jar包非常不方便，有些jar找不到
+       c. jar包添加到工程中导致工程过大
+   3.4 maven项目的依赖管理
+       maven项目管理所依赖的jar包不需要手动向工程添加jar包，只需要在pom.xml添加jar包的坐标，就会自动从maven仓库中下载jar包。
+   3.5 使用maven依赖管理添加jar的好处：
+       a. 通过pom.xml文件对jar包的版本进行统一管理，可避免版本冲突。
+       b. maven团队维护了一个非常全的maven仓库，里边包括了当前使用的jar包，maven工程可以自动从maven仓库下载jar包。
+       c. 其他好处：maven的跨平台，可在window、linux上使用。
+  4.maven仓库
+   4.1 本地仓库
+       4.1.1 Maven 本地仓库是机器上的一个文件夹。它在你第一次运行任何 maven 命令的时候创建。
+       4.1.2 Maven 本地仓库保存你的工程的所有依赖（library jar、plugin jar 等）。
+       4.1.3 当你运行一次 Maven 构建，Maven 会自动下载所有依赖的 jar 文件到本地仓库中。
+       4.1.4 Maven 本地仓库默认被创建在 %USER_HOME% 目录下。
+            要修改默认位置，在 %M2_HOME%\conf 目录中的 Maven 的 settings.xml 文件中定义另一个路径。
+            例如：<localRepository>C:/MyLocalRepository</localRepository>
+   4.2 远程仓库
+   4.3 中央仓库
+   
+  第二部分 naven生命周期
+  maven对项目构建过程分为三套相互独立的生命周期。
+  1. Clean Lifecycle 在进行真正的构建之前进行一些清理工作。
+    1.1 Clean生命周期一共包含了三个阶段：
+      1.1.1  pre-clean  执行一些需要在clean之前完成的工作
+      1.1.2  clean  移除所有上一次构建生成的文件
+      1.1.3  post-clean  执行一些需要在clean之后立刻完成的工作
+  2. Default Lifecycle 构建的核心部分，编译，测试，打包，部署等等。
+   2.1 Site生命周期的各个阶段：
+     2.1.1 validate   验证项目是正确的和所有必要的信息是可用的
+     2.1.2 compile    编译项目的源代码。
+     2.1.3 test       使用合适的单元测试框架运行测试。这些测试代码不会被打包或部署。
+     2.1.4 package    接受编译好的代码，打包成可发布的格式，如 JAR 。
+     2.1.5 verify     运行任何检查集成测试的结果以确保满足质量标准
+     2.1.6 install    将包安装至本地仓库，以让其它项目依赖。
+     2.1.7 deploy     将最终的包复制到远程的仓库，以让其它开发人员与项目共享。
+   
+  3. Site Lifecycle 生成项目报告，站点，发布站点。
+   3.1 Site生命周期的各个阶段：
+     3.1.1 pre-site  执行一些需要在生成站点文档之前完成的工作
+     3.1.2 site    生成项目的站点文档
+     3.1.3 post-site    执行一些需要在生成站点文档之后完成的工作，并且为部署做准备
+     3.1.4 site-deploy  将生成的站点文档部署到特定的服务器上  
+  4.注意点
+    运行任何一个阶段的时候，它前面的所有阶段都会被运行，这也就是为什么我们运行mvn install 的时候，代码会被编译，测试，打包。
+  
+  第三部分 项目构建
+  1.eclipse和maven
+    可以在eclipse中安装maven的插件
+  2.定义maven坐标
+    2.1 为什么要定义Maven坐标 
+        在我们开发Maven项目的时候，需要为其定义适当的坐标，这是Maven强制要求的。在这个基础上，其他Maven项目才能应用该项目生成的构件。
+    2.2 Maven坐标详解   
+      2.2.1 Maven坐标为各种构件引入了秩序，任何一个构件都必须明确定义自己的坐标，而一组Maven坐标是通过一些元素定义的，
+             它们是groupId,artifactId,version,packaging,class-sifer。
+             例如：<groupId>com.mycompany.app</groupId>  
+                  <artifactId>my-app</artifactId>  
+                  <packaging>jar</packaging>  
+                  <version>0.0.1-SNAPSHOT</version> 
+      2.2.2 groupId ：定义当前Maven项目隶属的实际项目。            
+      2.2.3 artifactId : 该元素定义当前实际项目中的一个Maven项目（模块）            
+      2.2.4 version : 该元素定义Maven项目当前的版本            
+      2.2.5 packaging ：定义Maven项目打包的方式   
+      2.2.6 classifier: 该元素用来帮助定义构建输出的一些附件。
+   3.pom介绍
+     3.1 POM 代表工程对象模型。它是使用 Maven 工作时的基本组建，是一个 xml 文件。它被放在工程根目录下，文件命名为 pom.xml。
+         POM 包含了关于工程和各种配置细节的信息，Maven 使用这些信息构建工程。
+     3.2 POM 也包含了目标和插件。
+         当执行一个任务或者目标时，Maven 会查找当前目录下的 POM，从其中读取所需要的配置信息，然后执行目标。
+         能够在 POM 中设置的一些配置如下：
+             project dependencies 
+             plugins
+             goals
+             build profiles
+             project version
+             developers
+             mailing list
+         例如：
+          <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0http://maven.apache.org/xsd/maven-4.0.0.xsd"      
+	        <!-- 模型版本。-->
+          <modelVersion>4.0.0</modelVersion>
+          <!-- 公司或者组织的唯一标志，并且配置时生成的路径也是由此生成,
+               如com.winner.trade，maven会将该项目打成的jar包放本地路径：/com/winner/trade -->
+          <groupId>com.winner.trade</groupId>
+          <!-- 本项目的唯一ID，一个groupId下面可能多个项目，就是靠artifactId来区分的 -->
+          <artifactId>trade-core</artifactId>
+          <!-- 本项目目前所处的版本号 -->
+          <version>1.0.0-SNAPSHOT</version>
+          <!-- 打包的机制，如pom,jar, maven-plugin, ejb, war, ear, rar, par，默认为jar -->
+          <packaging>jar</packaging>
+          <!-- 帮助定义构件输出的一些附属构件,附属构件与主构件对应，有时候需要加上classifier才能唯一的确定该构件 
+               不能直接定义项目的classifer,因为附属构件不是项目直接默认生成的，而是由附加的插件帮助生成的 -->
+          <classifier>...</classifier>
+          <!-- 定义本项目的依赖关系 -->
+          <dependencies>
+            <!-- 每个dependency都对应这一个jar包 -->
+            <dependency>
+              <!--一般情况下，maven是通过groupId、artifactId、version这三个元素值（俗称坐标）来检索该构件， 然后引入你的工程。
+                      如果别人想引用你现在开发的这个项目（前提是已开发完毕并发布到了远程仓库），--> 
+              <!--就需要在他的pom文件中新建一个dependency节点，将本项目的groupId、artifactId、version写入， maven就会把你上传的jar包下载到他的本地 -->
+              <groupId>com.winner.trade</groupId>
+              <artifactId>trade-test</artifactId>
+              <version>1.0.0-SNAPSHOT</version>
+              
+              <!-- maven认为，程序对外部的依赖会随着程序的所处阶段和应用场景而变化，所以maven中的依赖关系有作用域(scope)的限制。 -->
+              <!--scope包含如下的取值：compile（编译范围）、provided（已提供范围）、runtime（运行时范围）、test（测试范围）、system（系统范围） -->
+              <scope>test</scope>
+
+              <!-- 设置指依赖是否可选，默认为false,即子项目默认都继承:为true,则子项目必需显示的引入，与dependencyManagement里定义的依赖类似  -->
+              <optional>false</optional>
+
+              <!-- 屏蔽依赖关系。 比如项目中使用的libA依赖某个库的1.0版，libB依赖某个库的2.0版，现在想统一使用2.0版，就应该屏蔽掉对1.0版的依赖 -->
+              <exclusions>
+                <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+                </exclusion>
+              </exclusions>
+
+            </dependency>
+
+          </dependencies>
+
+          <!-- 为pom定义一些常量，在pom中的其它地方可以直接引用 使用方式 如下 ：${file.encoding} -->
+          <properties>
+            <file.encoding>UTF-8</file.encoding>
+            <java.source.version>1.5</java.source.version>
+            <java.target.version>1.5</java.target.version>
+          </properties>
+          ...
+         
+   4.构建web工程
+     4.1 第一步创建maven工程
+     4.2 第二步定义坐标
+     4.3 第三步设置编译版本 在pom.xml中设置
+     4.4 编写程序
+     4.5 配置web.xml
+     4.6 在pom.xml中添加需要的jar包
+     4.7 运行
+         eclipse下maven命令
+         maven clean 清除target目录
+         maven test  执行单元测试
+         maven install 将工程打包后发布到本地仓库
+         
+  第四部分 依赖管理-添加依赖
+  1.最简单的依赖举例
+    <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>cn.huang.test</groupId>
+    <artifactId>mavenTest</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+     <dependencies>
+        <dependency>
+            <groupId>junit</groupId>  
+            <artifactId>junit</artifactId>  
+            <version>4.4</version>
+            <!--不声明依赖范围scope，默认是compile-->              
+            <scope>test</scope>
+       </dependency>
+    </dependencies>
+    </project>
+    2.依赖元素dependency包括以下几个内容 
+      groupId 依赖的坐标 
+      artifactId 依赖的坐标 
+      version 依赖的坐标 
+      scope 依赖范围 
+      exclusions 用来排除传递性依赖 
+      type 依赖的类型，对应项目坐标定义的packaging，默认为jar 
+      classifier 用来帮助定义构件输出的一些附属构件 
+      systemPath 表示该依赖项在当前系统的绝对路径
+    3. 依赖范围  
+      compile（默认）：编译范围的依赖，它在编译和打包的时候都会把该依赖打包进去 
+      provided：在编译和测试范围有效，最后生成war包时不会打包进去。 
+      runtime：运行时依赖，编译的时候不依赖。 
+      system：系统依赖范围 
+      import：导入依赖范围
+      test：测试时依赖
+    4. 依赖范围 与 classpath的关系
+       4.1 对于Junit，一般来说你只有在运行测试的时候需要它 <scope>test</test>
+       4.2 在开发javaee应用的时候我们一定会用到servlet-api，它对于主源码和测试源码都是必要的 <scope>provided</scope>
+       4.3 jdbc是运行时依赖  <scope>runtime</scope>
+    5. 分类器（classifer）
+       GAV是Maven坐标最基本最重要的组成部分，但GAV不是全部。还有一个元素叫做分类器（classifier），90%的情况你不会用到它，
+       但有些时候，分类器非常不可或缺。举个简单的例子，当我们需要依赖TestNG的时候，简单的声明GAV会出错，
+       因为TestNG强制需要你提供分类器，以区别jdk14和jdk15。
+    6. 依赖传递性的冲突问题
+       依赖传递性冲突问题解决办法总结 
+       6.1、通过调整dependency的顺序来解决：哪个依赖的顺序在前面就依赖哪个 
+       6.2、自己添加一个dependeny来解决：因为该路径是最小的。 
+       6.3、通过exclusions元素排除不想要的传递性依赖
+    7. 查找坐标
+       7.1 从互联网搜索
+           http://search.maven.org/
+           http://mvnrepository.com/
+       7.2 使用maven插件索引功能
+           如果本地仓库有我们要的jar包，可以在pom.xml中邮件添加依赖。
+    
+    
+   
