@@ -1,0 +1,83 @@
+一、关系型数据库和SQL
+    实际上准确的讲，SQL是一门语言，而不是一个数据库。
+    什么是SQL呢？简而言之，SQL就是维护和使用关系型数据库中的的数据的一种标准的计算机语言。
+    
+ 1.1 SQL语言主要有3个主要的组成部分。
+      DML(Data Manipulation Language)数据操纵语言。这个模块可以让我们检索、修改、增加、删除数据库中的数据。
+      DDL(Data Definition Language)数据定义语言。是的我们能够创建和修改数据库本身。如：DDL提供ALTER语句，他让我们可以修改数据库中表的设计。
+      DCL(Data Control Language)数据控制语言，用于维护数据库的安全。
+      
+      在SQL术语中，记录(record)和字段(field)实际上就称为行(row)和列(column)。
+ 1.2 主键和外键
+      主键之所以有必要：
+        首先使你唯一标识表中单独的一行。主键确保了唯一性。
+        可以很容易的将一个表和另一个表关联。
+        主键一般就会自动默认创建索引，提高了查询速度。
+        
+      外键就是说A表中的某个字段，同时是B中的主键，那么这个字段就是A表中的外键。
+ 1.3 数据类型
+     一般来讲，有3中重要的数据类型：
+      数字(Numeric)     int bit float
+      字符(Character)   char  varchar(可变长度)
+      以及日期/时间(Date/Time)  date
+
+      其中bit是数字型，它只允许两个值，0和1。
+      空值不等于空格或空白。使用NULL表示空值。
+      
+二、SQL语句
+    1.SELECT 语句    
+      作用：SELECT语句用于从数据库中选取数据。
+      例：SELECT column_name,column_name  FROM table_name;
+      
+    2.SELECT DISTINCT 语句  
+      作用：DISTINCT 关键词用于返回唯一不同的值。
+      例：SELECT DISTINCT column_name,column_name FROM table_name;
+      
+    3. WHERE 子句 
+       作用：WHERE 子句用于提取那些满足指定标准的记录。
+       例：SELECT column_name,column_name FROM table_name WHERE column_name operator value;
+           
+           运算符	                           描述
+             =	                              等于
+             <>	                 不等于。注释：在 SQL 的一些版本中，该操作符可被写成 !=
+             >	                              大于
+             <	                              小于
+             >=	                             大于等于
+             <=                            	 小于等于
+           BETWEEN	                       在某个范围内
+            LIKE	                         搜索某种模式
+             IN	                      指定针对某个列的多个可能值
+             
+    4. ORDER BY 关键字
+       作用：ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。 
+            ORDER BY 关键字默认按照升序对记录进行排序。如果需要按照降序对记录进行排序，您可以使用 DESC 关键字。
+       例：SELECT column_name,column_name FROM table_name ORDER BY column_name,column_name ASC|DESC;
+       
+    5. INSERT INTO 语句
+       作用：NSERT INTO 语句用于向表中插入新记录。
+       例：INSERT INTO table_name VALUES (value1,value2,value3,...);
+       或：INSERT INTO table_name (column1,column2,column3,...) VALUES (value1,value2,value3,...);
+       
+    6. UPDATE 语句
+       作用：UPDATE 语句用于更新表中已存在的记录。
+       例：UPDATE table_name SET column1=value1,column2=value2,... WHERE some_column=some_value;
+       
+    7. DELETE 语句
+       作用：DELETE 语句用于删除表中的行。
+       例：DELETE FROM table_name WHERE some_column=some_value;
+       
+    8. SELECT TOP 子句
+       作用：SELECT TOP 子句用于规定要返回的记录的数目。（不是适用于所有的数据库系统，主要是SQL Server / MS Access数据库 ）
+       例：SELECT TOP number|percent column_name(s) FROM table_name;
+       
+    9. MySQL SELECT LIMIT （MySQL方言）
+       例： SELECT * FROM Websites LIMIT 2;
+    
+    10. LIKE 操作符
+        '%a'    //以a结尾的数据
+        'a%'    //以a开头的数据
+        '%a%'    //含有a的数据
+        '_a_'    //三位且中间字母是a的
+        '_a'    //两位且结尾字母是a的
+        'a_'    //两位且开头字母是a的
+    
