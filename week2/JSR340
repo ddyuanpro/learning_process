@@ -1,5 +1,5 @@
 
-一. Servlet 简介
+一. Servlet 
     Java Servlet 是运行在 Web 服务器或应用服务器上的程序，它是作为来自 Web 浏览器或其他 HTTP 客户端的请求
     和 HTTP 服务器上的数据库或应用程序之间的中间层。
    1.Servlet 任务
@@ -26,4 +26,335 @@
     getParameterValues()：如果参数出现一次以上，则调用该方法，并返回多个值，例如复选框。
     getParameterNames()：如果您想要得到当前请求中的所有参数的完整列表，则调用该方法。
     
-  4.
+  4. Servlet的配置
+        4.1 基本配置
+        例如：<servlet>
+                <servlet-name>QuickStartServlet2</servlet-name>
+                <servlet-class>com.itheima.servlet.QuickStartServlet2</servlet-class>
+              </servlet>
+              <servlet-mapping>
+                <servlet-name>QuickStartServlet2</servlet-name>
+                <url-pattern>/quickStartServlet2</url-pattern>
+              </servlet-mapping>
+
+            其中url-pattern的配置方式：
+            1）完全匹配 访问的资源与配置的资源完全相同才能访问到
+             <url-pattern>/quickStartServlet2</url-pattern>
+            2）目录匹配 格式：/虚拟的目录../*   *代表任意
+            <url-pattern>/aa/bb/*</url-pattern>
+            3）扩展名匹配 格式：*.扩展名
+            <url-pattern>/*.abc</url-pattern>
+
+        4.2 服务器启动实例化Servlet配置
+            Servlet的何时创建：默认第一次访问时创建
+            为什么是默认？
+            当在servlet的配置时 加上一个配置 <load-on-startup> servlet对象在服务器启动时就创建
+            3．缺省Servlet
+            可以将url-pattern配置一个/，代表该servlet是缺省的servlet
+            什么是缺省的servlet？
+            当你访问资源地址所有的servlet都不匹配时 ， 缺省的servlet负责处理
+
+            其实，web应用中所有的资源的响应都是servlet负责，包括静态资源。
+            
+二. servletContext
+    1．什么是ServletContext对象
+       ServletContext代表是一个web应用的环境（上下文）对象，ServletContext对象	内部封装是该web应用的信息，ServletContext对象一个web应用只有一个
+       问题：一个web应用有几个servlet对象？----多个
+       
+        ServletContext对象的生命周期？
+        创建：该web应用被加载（服务器启动或发布web应用（前提，服务器启动状态））
+        销毁：web应用被卸载（服务器关闭，移除该web应用）
+
+    2．怎样获得ServletContext对象
+    1）ServletContext servletContext = config.getServletContext();
+    2）ServletContext servletContext = this.getServletContext();
+
+    3．ServletContext的作用
+        (1)获得web应用全局的初始化参数
+            web.xml中配置初始化参数
+            <context-param>
+                <param-name>driver</param-name>
+                <param-value>com.mysql.jdbc.Driver</param-value>
+              </context-param>
+
+            通过context对象获得参数
+               //获得ServletContext对象
+                ServletContext context = getServletContext();
+               //1、获得初始化参数
+               String initParameter = context.getInitParameter("driver");
+               System.out.println(initParameter);
+
+        (2)获得web应用中任何资源的绝对路径（重要）
+        方法：String path = context.getRealPath(相对于该web应用的相对地址);
+
+        (3)ServletContext是一个域对象（重要）
+            什么是域对象？什么是域？
+            存储数据的区域就是域对象
+            ServletContext域对象的作用范围：整个web应（所有的web资源都可以随意向	servletcontext域中存取数据，数据可以共享）
+
+            域对象的通用的方法：
+            setAtrribute(String name,Object obj);
+            getAttribute(String name);
+            removeAttribute(String name);            
+            
+三. response
+    1．HttpServletResponse概述
+      我们在创建Servlet时会覆盖service()方法，或doGet()/doPost(),这些方法都有两个参数，一个为代表请求的request和代表响应response。
+      service方法中的response的类型是ServletResponse，而doGet/doPost方法的response的类型是HttpServletResponse，
+      HttpServletResponse是ServletResponse的子接口，功能和方法更加强大.
+
+      因为response代表响应，所以我们可以通过该对象分别设置Http响应的响应行，响应头和响应体
+
+    2．通过response设置响应行
+      设置响应行的状态码
+      setStatus(int sc)
+
+    3．通过response设置响应头
+       addHeader(String name, String value) 
+       addIntHeader(String name, int value) 
+       addDateHeader(String name, long date) 
+       setHeader(String name, String value) 
+       setDateHeader(String name, long date) 
+       setIntHeader(String name, int value)
+
+        其中，add表示添加，而set表示设置
+
+    4．通过response设置响应体
+        (1)响应体设置文本
+        PrintWriter getWriter()
+        获得字符流，通过字符流的write(String s)方法可以将字符串设置到response缓冲区中，随后Tomcat会将response缓冲区中的内容组装成Http响应返回给浏览器端。
+
+        (2)响应头设置字节
+        ServletOutputStream  getOutputStream()
+        获得字节流，通过该字节流的write(byte[] bytes)可以向response缓冲区中写入字节，在由Tomcat服务器将字节内容组成Http响应返回给浏览器
+
+四. requset
+    1．HttpServletRequest概述
+       在创建Servlet时会覆盖service()方法，或doGet()/doPost(),这些方法都有两个参数，一个为代表请求的request和代表响应response。
+       service方法中的request的类型是ServletRequest，而doGet/doPost方法的request的类型是HttpServletRequest，
+       HttpServletRequest是ServletRequest的子接口，功能和方法更加强大
+
+      因为request代表请求，所以我们可以通过该对象分别获得Http请求的请求行，请	求头和请求体
+
+    2．通过request获得请求行
+        获得客户端的请求方式：String getMethod()
+        获得请求的资源：
+        String getRequestURI() 
+        StringBuffer getRequestURL() 
+        String getContextPath() ---web应用的名称
+        String getQueryString() ---- get提交url地址后的参数字符串
+        username=zhangsan&password=123
+
+        注意：request获得客户机（客户端）的一些信息
+        request.getRemoteAddr() --- 获得访问的客户端IP地址
+
+    3．通过request获得请求头
+        long getDateHeader(String name)
+        String getHeader(String name)
+        Enumeration getHeaderNames()
+        Enumeration getHeaders(String name)
+        int getIntHeader(String name)
+
+    4．通过request获得请求体
+        请求体中的内容是通过post提交的请求参数，格式是：
+        username=zhangsan&password=123&hobby=football&hobby=basketball
+        key ---------------------- value
+        username				[zhangsan]
+        password				[123]
+        hobby					[football，basketball]
+
+        以上面参数为例，通过一下方法获得请求参数：
+        String getParameter(String name) 
+        String[] getParameterValues(String name)
+        Enumeration getParameterNames()
+        Map<String,String[]> getParameterMap()
+
+         注意：get请求方式的请求参数 上述的方法一样可以获得
+
+         解决post提交方式的乱码：request.setCharacterEncoding("UTF-8");
+         解决get提交的方式的乱码：
+         parameter = new String(parameter.getbytes("iso8859-1"),"utf-8");
+
+        5．request的其他功能
+            (1)request是一个域对象
+                request对象也是一个存储数据的区域对象，所以也具有如下方法：
+                setAttribute(String name, Object o)
+                getAttribute(String name)
+                removeAttribute(String name)
+
+                注意：request域的作用范围：一次请求中
+            (2)request完成请求转发
+                获得请求转发器----path是转发的地址
+                RequestDispatcher getRequestDispatcher(String path)
+                通过转发器对象转发
+                requestDispathcer.forward(ServletRequest request, ServletResponse response)
+
+        注意：ServletContext域与Request域的生命周期比较？
+            ServletContext：
+                创建：服务器启动
+                销毁：服务器关闭
+                域的作用范围：整个web应用
+            request：
+                创建：访问时创建request
+                销毁：响应结束request销毁
+                域的作用范围：一次请求中
+
+        注意：转发与重定向的区别？
+            1）重定向两次请求，转发一次请求
+            2）重定向地址栏的地址变化，转发地址不变
+            3）重新定向可以访问外部网站 转发只能访问内部资源
+            4）转发的性能要优于重定向
+            
+五. 会话技术Cookie&Session
+    1. 会话技术简介
+       1.1 存储客户端的状态
+           由一个问题引出今天的内容，例如网站的购物系统，用户将购买的商品信息存储到哪里？
+           因为Http协议是无状态的，也就是说每个客户访问服务器端资源时，服务器并不知道该客户端是谁，所以需要会话技术识别客户端的状态。
+           会话技术是帮助服务器记住客户端状态（区分客户端）
+
+    1.2 会话技术
+        从打开一个浏览器访问某个站点，到关闭这个浏览器的整个过程，成为一次会话。会话技术就是记录这次会话中客户端的状态与数据的。
+        会话技术分为Cookie和Session
+        Cookie：数据存储在客户端本地，减少服务器端的存储的压力，安全性不好，客户端可以清除cookie
+        Session：将数据存储到服务器端，安全性相对好，增加服务器的压力
+
+
+    2. Cookie技术
+        Cookie技术是将用户的数据存储到客户端的技术，我们分为两方面学习：
+        第一，服务器端怎样将一个Cookie发送到客户端
+        第二，服务器端怎样接受客户端携带的Cookie
+
+    2.1. 服务器端向客户端发送一个Cookie
+        1）创建Cookie：
+             Cookie cookie = new Cookie(String cookieName,String cookieValue);
+             示例：
+             Cookie cookie = new Cookie("username"，"zhangsan");
+             那么该cookie会以响应头的形式发送给客户端：
+
+           注意：Cookie中不能存储中文
+
+        2）设置Cookie在客户端的持久化时间：
+            cookie.setMaxAge(int seconds); ---时间秒
+            注意：如果不设置持久化时间，cookie会存储在浏览器的内存中，浏览器关闭	cookie信息销毁（会话级别的cookie），如果设置持久化时间，cookie信息会	被持久化到浏览器的磁盘文件里
+            示例：
+            cookie.setMaxAge(10*60);
+            设置cookie信息在浏览器的磁盘文件中存储的时间是10分钟，过期浏览器	自动删除该cookie信息
+
+        3）设置Cookie的携带路径：
+            cookie.setPath(String path);
+            注意：如果不设置携带路径，那么该cookie信息会在访问产生该cookie的	web资源所在的路径都携带cookie信息
+            示例：
+            cookie.setPath("/WEB16");
+            代表访问WEB16应用中的任何资源都携带cookie
+            cookie.setPath("/WEB16/cookieServlet");
+            代表访问WEB16中的cookieServlet时才携带cookie信息
+
+        4）向客户端发送cookie：
+            response.addCookie(Cookie cookie);
+
+        5）删除客户端的cookie：
+            如果想删除客户端的已经存储的cookie信息，那么就使用同名同路径的持久化时	间为0的cookie进行覆盖即可
+
+
+    2.2．服务器端怎么接受客户端携带的Cookie
+        cookie信息是以请求头的方式发送到服务器端的：
+
+        1）通过request获得所有的Cookie：
+            Cookie[] cookies = request.getCookies();
+        2）遍历Cookie数组，通过Cookie的名称获得我们想要的Cookie
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equal(cookieName)){
+                    String cookieValue = cookie.getValue();
+                }
+            }
+
+
+    3. Session技术
+        Session技术是将数据存储在服务器端的技术，会为每个客户端都创建一块内存空间存储客户的数据，
+        但客户端需要每次都携带一个标识ID去服务器中寻找属于自己的内存空间。
+        所以说Session的实现是基于Cookie，Session需要借助于Cookie存储客	户的唯一性标识JSESSIONID
+
+        在Session这我们需要学习如下三个问题：
+        怎样获得属于本客户端的session对象（内存区域）？
+        怎样向session中存取数据（session也是一个域对象）？
+        session对象的生命周期？
+
+    3.1．获得Session对象
+        HttpSession session = request.getSession();
+        此方法会获得专属于当前会话的Session对象，如果服务器端没有该会话的Session	对象会创建一个新的Session返回，
+        如果已经有了属于该会话的Session直接将已有的Session返回（实质就是根据JSESSIONID判断该客户端是否在服务器上已经存在session了）
+
+    3.2．怎样向session中存取数据（session也是一个域对象）
+        Session也是存储数据的区域对象，所以session对象也具有如下三个方法：
+        session.setAttribute(String name,Object obj);
+        session.getAttribute(String name);
+        session.removeAttribute(String name);
+
+    3.3．Session对象的生命周期）
+        创建：第一次执行request.getSession()时创建
+        销毁：
+        1）服务器（非正常）关闭时
+        2）session过期/失效（默认30分钟）
+        
+        可以在工程的web.xml中进行配置
+        <session-config>
+                <session-timeout>30</session-timeout>
+        </session-config>
+        3）手动销毁session
+        session.invalidate();
+
+        作用范围：
+        默认在一次会话中，也就是说在，一次会话中任何资源公用一个session对象            
+            
+ 六. 过滤器Filter
+    1．filter的简介
+        filter是对客户端访问资源的过滤，符合条件放行，不符合条件不放行，并且可以对目	标资源访问前后进行逻辑处理
+        过滤)
+
+    2．Filter的API详解
+    (1)filter生命周期及其与生命周期相关的方法
+        Filter接口有三个方法，并且这个三个都是与Filter的生命相关的方法
+        init(Filterconfig)：代表filter对象初始化方法 filter对象创建时执行
+        doFilter(ServletRequest,ServletResponse,FilterCha)：代表filter执行过滤的核心方法，
+                如果某资源在已经被配置到这个filter进行过滤的话，那么每次访问这个资源都会执行doFilter方法
+                
+        destory()：代表是filter销毁方法 当filter对象销毁时执行该方法
+
+        Filter对象的生命周期：
+        Filter何时创建：服务器启动时就创建该filter对象
+        Filter何时销毁：服务器关闭时filter销毁
+
+    (2)Filter的AP详解
+        1）init(FilterConfig)
+            其中参数config代表 该Filter对象的配置信息的对象，内部封装是该filter的配置信息。
+        2）destory()方法
+            filter对象销毁时执行
+        3）doFilter方法
+            doFilter(ServletRequest,ServletResponse,FilterChain)
+            其中的参数：
+            ServletRequest/ServletResponse：每次在执行doFilter方法时 web容器负责创建一个request和一个response对象作为doFilter的参数传递进来。
+              该request个该response就是在访问目标资源的service方法时的request和response。
+            FilterChain：过滤器链对象，通过该对象的doFilter方法可以放行该请求
+
+    3．Filter的配置
+        url-pattern配置时
+        1）完全匹配  /sertvle1
+        2）目录匹配  /aaa/bbb/* ----最多的
+                    /user/*：访问前台的资源进入此过滤器
+                    /admin/*：访问后台的资源时执行此过滤器
+        3）扩展名匹配  *.abc  *.jsp
+
+        注意：url-pattern可以使用servlet-name替代，也可以混用
+
+        dispatcher：访问的方式(了解)
+        REQUEST：默认值，代表直接访问某个资源时执行filter
+        FORWARD：转发时才执行filter
+        INCLUDE: 包含资源时执行filter
+        ERROR：发生错误时 进行跳转是执行filter
+
+        总结Filter的作用？
+        1）公共代码的提取
+        2）可以对request和response中的方法进行增强(装饰者模式/动态代理)
+        3）进行权限控制           
+          
+          
