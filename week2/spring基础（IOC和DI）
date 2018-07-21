@@ -1,0 +1,109 @@
+IOC和DI
+  1.spring的好处：
+    方便解耦，简化开发
+    Spring 就是一个大工厂，可以将所有对象创建和依赖关系维护，交给 Spring 管理
+    AOP 编程的支持
+    Spring 提供面向切面编程，可以方便的实现对程序进行权限拦截、运行监控等功能
+    声明式事务的支持
+    只需要通过配置就可以完成对事务的管理，而无需手动编程
+    方便程序的测试
+    Spring 对 Junit4 支持，可以通过注解方便的测试 Spring 程序
+    方便集成各种优秀框架
+    Spring 不排斥各种优秀的开源框架，其内部提供了对各种优秀框架（如： Struts、 Hibernate、MyBatis、 Quartz 等）的直接支持
+    降低 JavaEE API 的使用难度
+	
+  2.IOC 和 DI:
+    IOC :控制反转,将对象的创建权交给了 Spring.
+    DI :Dependency Injection 依赖注入.需要有 IOC 的环境,Spring 创建这个类的过程中,Spring 将类的依 赖的属性设置进去
+	
+  3.Spring 的相关配置:
+    3.1 id 属性和 name 属性标签的配置
+	    id :Bean 起个名字. 在约束中采用 ID 的约束:唯一.必须以字母开始，可以使用字母、数字、连字符、下划线、句话、冒号
+        <bean id=”bookAction”>
+        name:Bean 起个名字. 没有采用 ID 的约束. name:出现特殊字符.如果<bean>没有 id 的话 , name 可以当做 id 使用.
+    3.2 scope 属性： Bean 的作用范围
+	    * singleton :默认值，单例的.
+      * prototype :多例的.
+      * request :WEB 项目中,Spring 创建一个 Bean 的对象,将对象存入到 request 域中.
+      * session :WEB 项目中,Spring 创建一个 Bean 的对象,将对象存入到 session 域中.
+      * globalSession :WEB 项目中,应用在 Porlet 环境.如果没有 Porlet 环境那么 globalSession 相当于 session.
+      
+	3.3 Bean 的生命周期的配置
+	    通过配置<bean>标签上的 init-method 作为 Bean 的初始化的时候执行的方法，配置 destroy-method作为 Bean 的销毁的时候执行的方法。
+       销毁方法想要执行，需要是单例创建的 Bean 而且在工厂关闭的时候， Bean 才会被销毁.
+		
+  4.Spring 生成 Bean 的时候三种方式(了解)
+    4.1	无参数的构造方法的方式:
+		<!-- 方式一：无参数的构造方法的实例化 -->
+		<bean id="bean1" class="cn.itcast.spring.demo3.Bean1"></bean>  
+    
+	4.2	静态工厂实例化的方式
+		提供一个工厂类：
+		public class Bean2Factory {
+			public static Bean2 getBean2(){
+				return new Bean2();
+			}
+		}
+	  <!-- 方式二：静态工厂实例化 Bean -->
+      <bean id="bean2" class="cn.itcast.spring.demo3.Bean2Factory" factory-method="getBean2"/>
+	4.3 实例工厂实例化的方式
+        提供 Bean3 的实例工厂:
+		public class Bean3Factory {
+			public Bean3 getBean3(){
+				return new Bean3();
+			}
+		}
+		<!-- 方式三：实例工厂实例化 Bean -->
+		<bean id="bean3Factory" class="cn.itcast.spring.demo3.Bean3Factory"></bean>
+		<bean id="bean3" factory-bean="bean3Factory" factory-method="getBean3"></bean>		
+		
+  5.Spring 的 Bean 的属性注入
+	5.1 构造方法的方式注入属性
+		<!-- 第一种：构造方法的方式 -->
+		<bean id="car" class="cn.itcast.spring.demo4.Car">
+			<constructor-arg name="name" value="保时捷"/>
+			<constructor-arg name="price" value="1000000"/>
+		</bean>
+		
+	5.2	set 方法的方式注入属性
+		<!-- 第二种： set 方法的方式 -->
+		<bean id="car2" class="cn.itcast.spring.demo4.Car2">
+			<property name="name" value="奇瑞 QQ"/>
+			<property name="price" value="40000"/>
+		</bean>
+
+   6.Spring 的属性注入：对象类型的注入:	
+		<!-- 注入对象类型的属性 -->
+		<bean id="person" class="cn.itcast.spring.demo4.Person">
+			<property name="name" value="会希"/>
+			<!-- ref 属性：引用另一个 bean 的 id 或 name -->
+			<property name="car2" ref="car2"/>
+		</bean>   
+		
+   7.Spring 的 Bean 管理:(注解方式)	
+      <!-- Spring 的注解开发:组件扫描(类上注解: 可以直接使用属性注入的注解) -->
+	  <context:component-scan base-package="com.itheima.spring.demo1"/>
+		
+	7.1 Spring 的 Bean 管理的中常用的注解:	
+		7.1.1 @Component:组件.(作用在类上)
+			  Spring 中提供@Component 的三个衍生注解:(功能目前来讲是一致的)
+			   * @Controller :WEB 层
+			   * @Service :业务层
+			   * @Repository :持久层
+			  这三个注解是为了让标注类本身的用途清晰
+		7.1.2 属性注入的注解:(使用注解注入的方式,可以不用提供 set 方法.)
+				@Value :用于注入普通类型.
+				@Autowired :自动装配:
+					* 默认按类型进行装配.
+					* 按名称注入:
+			        * @Qualifier:强制使用名称注入.
+				@Resource 相当于:
+				* @Autowired 和@Qualifier 一起使用.
+
+		7.1.3 Bean 的作用范围的注解:
+			    @Scope:
+			    * singleton:单例
+			    * prototype:多例
+
+
+
